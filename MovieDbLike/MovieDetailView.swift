@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct MovieDetailView: View {
+    @Namespace var namespace
     let movie : Movie
     var body: some View {
         ScrollView {
-       
                 VStack {
                     AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")")) { image in
                         image
@@ -38,7 +38,7 @@ struct MovieDetailView: View {
                                 Text(String(format: "%.1f", movie.voteAverage))
                                 Image(systemName: "star.fill")
                                     .foregroundStyle(.yellow)
- 
+                                
                             }.font(.caption)
                             
                             ZStack {
@@ -49,8 +49,9 @@ struct MovieDetailView: View {
                                     Link("Trailer", destination: URL(string: "https://www.youtube.com/watch?v=abc123")!)
                                 }  .font(.caption)
                                     .foregroundColor(.blue)
-                               
-                            }
+                                    
+                                
+                            }.shadow(radius: 10)
                         }.padding()
                         
                         Spacer()
@@ -84,7 +85,6 @@ struct MovieDetailView: View {
                     Spacer()
                 }
             }
-            
         }
         
     
@@ -101,4 +101,5 @@ struct MovieDetailView: View {
         }
     }
 }
+
 

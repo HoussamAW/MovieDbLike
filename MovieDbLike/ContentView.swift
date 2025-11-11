@@ -21,7 +21,7 @@ struct ContentView: View {
     
     var filteredMovies: [Movie] {
           if searchMovie.isEmpty {
-              return movies.suffix(20)
+              return Array(movies.prefix(20))
           } else {
               return movies.filter {
                   $0.title.lowercased().contains(searchMovie.lowercased())

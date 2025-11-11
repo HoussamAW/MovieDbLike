@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 
+//For show movies
 
 struct Movie: Codable, Identifiable {
     let id: Int
@@ -23,22 +24,24 @@ struct MoviesResponse: Codable {
     let results: [Movie]
 }
 
+
 func performAPICall(language: String) async throws -> [Movie] {
     var allMovies: [Movie] = []
+    let decoder = JSONDecoder()
+    let maxPages = 100
 
-    for page in 1...200 {
-        let urlString = "https://api.themoviedb.org/3/movie/popular?api_key=\(APIKey)&language=\(language)&page=\(page)"
-        guard let url = URL(string: urlString) else { continue }
+    for page in 1..<maxPages {
+        guard let url = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=\(APIKey)&language=\(language)&page=\(page)") else {
+            continue
+        }
 
         let (data, _) = try await URLSession.shared.data(from: url)
 
-        let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         let decoded = try decoder.decode(MoviesResponse.self, from: data)
-        allMovies.append(contentsOf: decoded.results)
+        allMovies.append(contentsOf: decoded.results) 
     }
     
     return allMovies
 }
-
