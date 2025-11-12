@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MovieDetailView: View {
-    @Namespace var namespace
     let movie : Movie
+    @State private var trailerKey: String?
     var body: some View {
         ScrollView {
                 VStack {
@@ -41,20 +41,36 @@ struct MovieDetailView: View {
                                 
                             }.font(.caption)
                             
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 80,height: 30)
-                                HStack {
-                                    Image(systemName: "play.fill")
-                                    Link("Trailer", destination: URL(string: "https://www.youtube.com/watch?v=abc123")!)
-                                }  .font(.caption)
-                                    .foregroundColor(.blue)
-                                    
+                            if let key = trailerKey {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 80, height: 30)
+                                        .foregroundStyle(.ultraThinMaterial)
+                                    HStack {
+                                        Image(systemName: "play.fill")
+                                        Link("Trailer", destination: URL(string: "https://www.youtube.com/watch?v=\(key)")!)
+                                    }
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                  
+                                }.shadow(radius: 10)
                                 
-                            }.shadow(radius: 10)
+                            } else {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: .none, height: 30)
+                                        .foregroundStyle(.ultraThinMaterial)
+                                    
+                                        Text("Trailer unvailable")
+                                            .font(.caption)
+                                            .foregroundColor(.white)
+                                    
+                                }.shadow(radius: 10)
+                            }
                         }.padding()
                         
                         Spacer()
+                        
                         AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")")) { image in
                             image
                                 .resizable()
@@ -84,6 +100,12 @@ struct MovieDetailView: View {
                     
                     Spacer()
                 }
+            }.task {
+                do {
+                    trailerKey = try await fetchTrailerKey(for: movie.id, language: "fr-FR")
+                } catch {
+                    print("Erreur trailer :", error)
+                }
             }
         }
         
@@ -97,7 +119,7 @@ struct MovieDetailView: View {
             outputFormatter.dateFormat = "yyyy"
             return outputFormatter.string(from: date)
         } else {
-            return "Date Inconnue"
+            return "Date Unknown"
         }
     }
 }
