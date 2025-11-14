@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MovieDetailView: View {
+    @Binding var languages: String
     let movie : Movie
     @State private var trailerKey: String?
     var body: some View {
@@ -100,9 +101,9 @@ struct MovieDetailView: View {
                     
                     Spacer()
                 }
-            }.task {
+            }.task(id: languages) {
                 do {
-                    trailerKey = try await fetchTrailerKey(for: movie.id, language: "fr-FR")
+                    trailerKey = try await fetchTrailerKey(for: movie.id, language: languages)
                 } catch {
                     print("Erreur trailer :", error)
                 }

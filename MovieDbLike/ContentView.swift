@@ -29,6 +29,21 @@ struct ContentView: View {
           }
       }
     
+    var changeLanguagePlaceholder: String {
+        switch languages {
+        case "fr-FR": 
+            return "Rechercher un Film"
+        case "en-US": 
+            return "Search for a movie"
+        case "it-IT":
+            return "Cerca un film"
+        case "fa-IR":
+             return "جستجو برای فیلم"
+        default:
+            return "Search for a movie"
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -38,7 +53,7 @@ struct ContentView: View {
                     LazyVGrid(columns: columns) {
                         ForEach(filteredMovies) { movie in
                             NavigationLink {
-                               MovieDetailView(movie: movie)
+                                MovieDetailView(languages: $languages, movie: movie)
                                     .navigationTransition(.zoom(sourceID: "Zoom", in: self.namespace))
                             } label: {
                                 VStack {
@@ -65,12 +80,14 @@ struct ContentView: View {
             }
             .navigationTitle("Popular Movie")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchMovie,placement: .navigationBarDrawer(displayMode: .automatic), prompt:  languages == "en-US" ? "Search for a movie" : "Rechercher un Film")
+            .searchable(text: $searchMovie,placement: .navigationBarDrawer(displayMode: .automatic), prompt: changeLanguagePlaceholder)
             .toolbar {
                 ToolbarItem {
                     Picker("Languages", selection: $languages) {
                         Text("🇫🇷").tag("fr-FR")
                         Text("🇬🇧").tag("en-US")
+                        Text("🇮🇹").tag("it-IT")
+                        Text("🇮🇷").tag("fa-IR")
                     }.pickerStyle(.menu)
                         .frame(width: 30)
                 }

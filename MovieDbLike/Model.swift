@@ -63,18 +63,18 @@ struct VideosResponse: Codable {
 }
 
 
-func fetchTrailerKey(for movieId: Int, language: String = "fr-FR") async throws -> String? {
+func fetchTrailerKey(for movieId: Int, language:String) async throws -> String? {
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-     let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/videos?api_key=\(APIKey)")
+     let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/videos?api_key=\(APIKey)&language=\(language)")
         let (data, _) = try await URLSession.shared.data(from: url!)
         
         let videos = try decoder.decode(VideosResponse.self, from: data).results
         
-    let trailer = videos.first(where: {
+    let trailer = videos.first {
         $0.site == "YouTube" && $0.type == "Trailer"
-    })
+    }
         return trailer?.key
 
 }
